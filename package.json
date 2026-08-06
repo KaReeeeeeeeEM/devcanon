@@ -1,0 +1,48 @@
+{
+  "name": "devcanon",
+  "version": "1.1.0",
+  "description": "Install durable AI engineering standards into any repository.",
+  "type": "module",
+  "bin": {
+    "devcanon": "bin/aistd.js"
+  },
+  "files": [
+    ".ai",
+    "bin",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "docs",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "check": "node bin/aistd.js check .",
+    "test": "node --test",
+    "prepack": "npm test && npm run check"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "engineering-standards",
+    "scaffold",
+    "repository",
+    "developer-tools"
+  ],
+  "author": "Kareem",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KaReeeeeeeeEM/devcanon.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KaReeeeeeeeEM/devcanon/issues"
+  },
+  "homepage": "https://github.com/KaReeeeeeeeEM/devcanon#readme"
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">devcanon mark</title>
+  <desc id="desc">A cyan command prompt forming the letter D inside a dark rounded square.</desc>
+  <rect width="128" height="128" rx="28" fill="#08111f"/>
+  <path d="M32 31h27c24 0 39 13 39 33S83 97 59 97H32V31Z" fill="none" stroke="#67e8f9" stroke-width="10" stroke-linejoin="round"/>
+  <path d="m47 52 13 12-13 12M65 78h15" fill="none" stroke="#f8fafc" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
