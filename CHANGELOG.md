@@ -36,5 +36,5 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Zero runtime dependencies and Node.js 20+ support.
 
 [Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v1.1.0...HEAD
-[1.1.0]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.0.0
+[1.1.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.1.0
+[1.0.0]: https://www.npmjs.com/package/devcanon/v/1.0.0
