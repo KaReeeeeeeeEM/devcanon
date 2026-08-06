@@ -30,6 +30,8 @@ Running `devcanon` without arguments opens the interactive terminal:
 
 ```text
 devcanon › /init
+devcanon › /configure
+devcanon › /studio
 devcanon › /check
 devcanon › /update --dry-run
 devcanon › /help
@@ -47,6 +49,14 @@ devcanon › /init
 ```bash
 npx devcanon init
 ```
+
+Use a preset created in the web or desktop Studio:
+
+```bash
+npx devcanon init --preset dc1_<your-preset-code>
+```
+
+The preset writes reviewable `.ai/preset.md` and `.ai/preset.json` files. It never hides configuration in a remote account.
 
 ## Pin it to a project
 
@@ -71,6 +81,15 @@ devcanon update            # add missing files; preserve conflicts
 devcanon update --force    # intentionally replace conflicts
 devcanon check             # validate the installed handbook
 ```
+
+Edit one standard from an interactive file picker, or open it directly:
+
+```bash
+devcanon configure
+devcanon configure --file design.md
+```
+
+For a local visual editor, run `devcanon studio`. Studio binds only to `127.0.0.1`, uses a one-time access token, and lets you save Markdown or apply safe handbook updates in the browser.
 
 Target another repository by path:
 
@@ -112,9 +131,9 @@ The root `AGENTS.md` points compatible AI tools to `.ai/AGENTS.md`. Existing roo
 - [Contributing guide](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 
-## Future website
+## Web and desktop Studio
 
-The separate website provides installation choices, direct links to the [npm registry](https://www.npmjs.com/package/devcanon), handbook previews, documentation, and a release timeline generated from this repository's `CHANGELOG.md`.
+The [separate website](https://github.com/KaReeeeeeeeEM/devcanon-website) includes a preset builder, installation choices, documentation, and release history. Devcanon Studio packages that builder for macOS, Windows, and Linux; releases are distributed from GitHub.
 
 ## License
 

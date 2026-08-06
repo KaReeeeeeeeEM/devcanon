@@ -3,6 +3,8 @@
 ## Purpose
 This is the entry point for every human or AI change. The files in `.ai/` are mandatory, versioned engineering policy—not suggestions. Read this file, `project-rules.md`, and the standards relevant to the requested work before planning or editing.
 
+If `.ai/preset.md` exists, read it after the relevant general standards. It contains project-specific preferences and outranks general style preferences, but cannot weaken security, accessibility, privacy, or data-integrity rules.
+
 ## Philosophy
 Consistency, maintainability, safety, and fit with the existing product matter more than novelty. Preserve established project conventions unless they are unsafe, broken, or the task explicitly changes them. Prefer the smallest coherent change that solves the problem.
 

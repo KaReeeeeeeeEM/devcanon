@@ -1,6 +1,6 @@
 {
   "name": "devcanon",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Install durable AI engineering standards into any repository.",
   "type": "module",
   "bin": {
@@ -9,6 +9,8 @@
   "files": [
     ".ai",
     "bin",
+    "lib",
+    "studio",
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "docs",

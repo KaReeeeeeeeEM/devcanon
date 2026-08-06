@@ -9,6 +9,15 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Documentation website with a release timeline and install/download options.
 - Configurable standard packs and organization presets.
 
+## [2.1.0] - 2026-08-06
+
+### Added
+
+- Portable, offline `dc1_` preset codes and `init --preset <code>` support.
+- `configure` command with interactive standards-file selection and direct `--file` mode.
+- `studio` command providing a localhost-only visual Markdown editor and safe update button.
+- Project-specific `.ai/preset.md` profiles with explicit precedence and safety boundaries.
+
 ## [2.0.0] - 2026-08-06
 
 ### Changed
@@ -62,7 +71,8 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Conflict preservation, `--force`, `--dry-run`, and optional root `AGENTS.md` discovery.
 - Zero runtime dependencies and Node.js 20+ support.
 
-[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.1.0
 [2.0.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.0.0
 [1.1.1]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.1.1
 [1.1.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.1.0
