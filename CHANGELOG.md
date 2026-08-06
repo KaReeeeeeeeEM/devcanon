@@ -9,6 +9,14 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Documentation website with a release timeline and install/download options.
 - Configurable standard packs and organization presets.
 
+## [2.1.1] - 2026-08-06
+
+### Changed
+
+- Added the Devcanon mark and product identity to the local Studio sidebar.
+- Rendered standards navigation with safe DOM nodes instead of HTML injection.
+- Preserved the local handbook editor and non-destructive update workflow.
+
 ## [2.1.0] - 2026-08-06
 
 ### Added
@@ -71,7 +79,8 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Conflict preservation, `--force`, `--dry-run`, and optional root `AGENTS.md` discovery.
 - Zero runtime dependencies and Node.js 20+ support.
 
-[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.1.1
 [2.1.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.1.0
 [2.0.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.0.0
 [1.1.1]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.1.1
