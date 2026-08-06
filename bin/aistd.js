@@ -6,11 +6,14 @@ import path from 'node:path';
 import process from 'node:process';
 import readline from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
+import { applyPreset } from '../lib/preset.js';
+import { configureStandards } from '../lib/configure.js';
+import { startStudio } from '../lib/studio.js';
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const templateRoot = path.join(packageRoot, '.ai');
 const packageJson = JSON.parse(await readFile(path.join(packageRoot, 'package.json'), 'utf8'));
-const commandNames = new Set(['init', 'update', 'check', 'help']);
+const commandNames = new Set(['init', 'update', 'check', 'configure', 'studio', 'help']);
 const colorEnabled = process.stdout.isTTY && !process.env.NO_COLOR;
 const paint = (code, value) => colorEnabled ? `\u001b[${code}m${value}\u001b[0m` : value;
 
@@ -33,17 +36,23 @@ Usage:
   devcanon init [directory] [--dry-run] [--force] [--no-root-agents]
   devcanon update [directory] [--dry-run] [--force]
   devcanon check [directory]
+  devcanon configure [directory] [--file design.md]
+  devcanon studio [directory]
 
 Commands:
   interactive  Open a prompt with slash commands
   init    Add missing standards safely; preserve existing files by default
   update  Show or apply changes from the installed template
   check   Validate the standards manifest and required document sections
+  configure  Choose and edit an installed standard
+  studio  Open the visual local handbook editor
 
 Options:
   --dry-run         Preview file operations without writing
   --force           Replace differing devcanon-managed files
   --no-root-agents  Do not create the root AGENTS.md discovery file
+  --preset <code>   Apply a portable dc1 preset during init
+  --file <path>     Edit one standard with configure
   -h, --help        Show this help
   -v, --version     Print the installed version
 
@@ -75,8 +84,8 @@ function friendlyError(error, target = process.cwd()) {
 }
 
 function parseArgs(argv) {
-  const flags = new Set(argv.filter((arg) => arg.startsWith('-')));
-  const positional = argv.filter((arg) => !arg.startsWith('-'));
+  const flags = new Set(); const values = {}; const positional = [];
+  for (let index=0; index<argv.length; index++) { const arg=argv[index]; if(['--preset','--file'].includes(arg)){ if(!argv[index+1]) throw new Error(`${arg} requires a value.`); values[arg]=argv[++index]; } else if(arg.startsWith('-')) flags.add(arg); else positional.push(arg); }
   const command = positional.length === 0 ? 'interactive' : positional.shift();
   return {
     command,
@@ -86,6 +95,8 @@ function parseArgs(argv) {
     rootAgents: !flags.has('--no-root-agents'),
     help: flags.has('-h') || flags.has('--help'),
     version: flags.has('-v') || flags.has('--version'),
+    preset: values['--preset'],
+    file: values['--file'],
   };
 }
 
@@ -119,6 +130,8 @@ async function runInteractive() {
   /update [path]        Add missing files and report local differences
   /update --dry-run     Preview an update
   /update --force       Replace locally modified standards
+  /configure            Choose a standards file and edit it
+  /studio               Open the visual local editor
   /where                Show the current target directory
   /cd <path>            Change the current target directory
   /version              Show the installed version
@@ -147,7 +160,7 @@ async function runInteractive() {
         continue;
       }
       try {
-        await execute(parseArgs([resolvedCommand, ...args]));
+        await execute(parseArgs([resolvedCommand, ...args]), { terminal });
       } catch (error) {
         const attemptedTarget = path.resolve(args.find((argument) => !argument.startsWith('-')) ?? '.');
         console.error(paint('31', friendlyError(error, attemptedTarget)));
@@ -236,6 +249,7 @@ async function install(options) {
   if (!operations.length) console.log('devcanon is already up to date.');
   else console.log(`\n${options.dryRun ? 'Previewed' : 'Completed'}: ${changed} change(s), ${conflicts} preserved conflict(s).`);
   if (conflicts) console.log('Review conflicts manually or rerun with --force to replace them.');
+  if (options.preset && !options.dryRun) { await applyPreset(options.target, options.preset); console.log('Applied project preset: .ai/preset.md'); }
   if (options.command === 'init' && !options.dryRun) console.log('Start with .ai/AGENTS.md.');
 }
 
@@ -274,8 +288,10 @@ async function check(target) {
   console.log(`Valid: ${requiredFiles.length} standards files with all required sections.`);
 }
 
-async function execute(options) {
+async function execute(options, context = {}) {
   if (options.command === 'check') return check(options.target);
+  if (options.command === 'configure') return configureStandards(options.target, { file: options.file, terminal: context.terminal });
+  if (options.command === 'studio') return startStudio(options.target, { onUpdate: () => install({ ...options, command: 'update', force: false, dryRun: false }) });
   if (options.command === 'init' || options.command === 'update') return install(options);
   throw new Error(`Unknown command: ${options.command}`);
 }
