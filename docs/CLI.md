@@ -29,9 +29,11 @@ Run `devcanon` with no arguments. The prompt accepts slash commands and their pl
 | Shortcut | Purpose |
 | --- | --- |
 | `/init [path]` | Install missing standards safely |
+| `/install [path]` | Alias for `/init` |
 | `/update [path]` | Add missing standards and report conflicts |
 | `/check [path]` | Validate all required files and sections |
 | `/where` | Display the current target directory |
+| `/cd <path>` | Change the target repository |
 | `/version` | Display the CLI version |
 | `/clear` | Clear and redraw the terminal |
 | `/help` or `/?` | Display shortcut help |
@@ -41,6 +43,13 @@ Paths containing spaces may be quoted:
 
 ```text
 devcanon › /init "../My Existing App"
+```
+
+If devcanon starts in `/`, it refuses to install into the filesystem root and explains how to choose a project:
+
+```text
+devcanon › /cd /Users/you/Projects/my-app
+devcanon › /init
 ```
 
 ## Direct commands

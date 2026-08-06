@@ -9,6 +9,20 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Documentation website with a release timeline and install/download options.
 - Configurable standard packs and organization presets.
 
+## [1.1.1] - 2026-08-06
+
+### Fixed
+
+- Refuse installation into the filesystem root before creating or listing files.
+- Translate filesystem failures into clear, actionable guidance instead of exposing raw Node.js errors.
+
+### Added
+
+- Startup warning when interactive mode is launched from the filesystem root.
+- `/install` as a discoverable alias for `/init`.
+- `/cd <path>` to change the target repository without restarting devcanon.
+- Writable-target preflight checks before installation begins.
+
 ## [1.1.0] - 2026-08-06
 
 ### Added
@@ -35,6 +49,7 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Conflict preservation, `--force`, `--dry-run`, and optional root `AGENTS.md` discovery.
 - Zero runtime dependencies and Node.js 20+ support.
 
-[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.1.1
 [1.1.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.1.0
 [1.0.0]: https://www.npmjs.com/package/devcanon/v/1.0.0

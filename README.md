@@ -35,6 +35,13 @@ devcanon › /update --dry-run
 devcanon › /help
 ```
 
+If the shell opens in the wrong directory, switch targets without leaving devcanon:
+
+```text
+devcanon › /cd /path/to/your/project
+devcanon › /init
+```
+
 ## Use without installing
 
 ```bash

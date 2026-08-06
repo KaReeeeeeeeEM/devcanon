@@ -44,7 +44,7 @@ test('interactive mode accepts slash shortcuts and exits cleanly', async () => {
   let exitSent = false;
   child.stdout.on('data', (chunk) => {
     output += chunk;
-    if (!exitSent && output.includes('devcanon › 1.1.0')) {
+    if (!exitSent && output.includes('devcanon › 1.1.1')) {
       exitSent = true;
       child.stdin.end('/exit\n');
     }
@@ -54,10 +54,22 @@ test('interactive mode accepts slash shortcuts and exits cleanly', async () => {
   const exitCode = await new Promise((resolve) => child.on('close', resolve));
   assert.equal(exitCode, 0);
   assert.match(output, /Engineering standards, on command/);
-  assert.match(output, /1\.1\.0/);
+  assert.match(output, /1\.1\.1/);
   assert.match(output, /Standards saved\. Build well\./);
 });
 
 test('unknown direct commands fail instead of being interpreted as paths', async () => {
   await assert.rejects(exec(process.execPath, [cli, 'unknown']), /Unknown command: unknown/);
+});
+
+test('refuses the filesystem root with actionable guidance', async () => {
+  await assert.rejects(
+    exec(process.execPath, [cli, 'init', path.parse(process.cwd()).root]),
+    (error) => {
+      assert.match(error.stderr, /will not install into the filesystem root/);
+      assert.match(error.stderr, /cd \/path\/to\/your\/project/);
+      assert.doesNotMatch(error.stderr, /ENOENT|EACCES|EPERM/);
+      return true;
+    },
+  );
 });

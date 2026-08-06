@@ -54,6 +54,26 @@ Examples:
   npx devcanon update --force`);
 }
 
+function isFilesystemRoot(target) {
+  return path.parse(target).root === path.resolve(target);
+}
+
+function targetGuidance(target) {
+  return `Choose a repository first:\n  cd /path/to/your/project && devcanon\nor run:\n  devcanon init /path/to/your/project\n\nCurrent target: ${target}`;
+}
+
+function friendlyError(error, target = process.cwd()) {
+  if (error?.code === 'EACCES' || error?.code === 'EPERM') {
+    return `devcanon cannot write to ${target}. Check the folder permissions or choose a repository you own.\n\n${targetGuidance(target)}`;
+  }
+  if (error?.code === 'EROFS') {
+    return `The target is on a read-only filesystem: ${target}.\n\n${targetGuidance(target)}`;
+  }
+  if (error?.code === 'ENOSPC') return `There is not enough disk space to install the standards in ${target}. Free some space and try again.`;
+  if (error?.code === 'ENOENT') return `The target directory could not be found: ${target}. Check the path and try again.`;
+  return error?.message ?? String(error);
+}
+
 function parseArgs(argv) {
   const flags = new Set(argv.filter((arg) => arg.startsWith('-')));
   const positional = argv.filter((arg) => !arg.startsWith('-'));
@@ -79,6 +99,9 @@ async function runInteractive() {
   printBanner();
   console.log(`Current directory: ${paint('2', process.cwd())}`);
   console.log(`Type ${paint('36', '/help')} for commands or ${paint('36', '/init')} to install standards.\n`);
+  if (isFilesystemRoot(process.cwd())) {
+    console.log(paint('33', `You are at the filesystem root. devcanon will not install here.\nUse /cd /path/to/project or /init /path/to/project.\n`));
+  }
 
   const terminal = readline.createInterface({ input: process.stdin, output: process.stdout });
   try {
@@ -91,27 +114,43 @@ async function runInteractive() {
       if (['help', '?'].includes(command)) {
         console.log(`\n${paint('1', 'Shortcuts')}
   /init [path]          Install standards without overwriting local changes
+  /install [path]       Alias for /init
   /check [path]         Validate the handbook
   /update [path]        Add missing files and report local differences
   /update --dry-run     Preview an update
   /update --force       Replace locally modified standards
   /where                Show the current target directory
+  /cd <path>            Change the current target directory
   /version              Show the installed version
   /clear                Clear the terminal
   /exit                 Leave devcanon\n`);
         continue;
       }
       if (command === 'where') { console.log(process.cwd()); continue; }
+      if (command === 'cd') {
+        const destination = path.resolve(args[0] ?? '');
+        try {
+          if (!args[0]) throw new Error('Enter a directory, for example: /cd /path/to/project');
+          if (!await exists(destination) || !(await stat(destination)).isDirectory()) throw new Error(`Directory not found: ${destination}`);
+          process.chdir(destination);
+          console.log(`Current directory: ${destination}`);
+        } catch (error) {
+          console.error(paint('31', friendlyError(error, destination)));
+        }
+        continue;
+      }
       if (command === 'version') { console.log(packageJson.version); continue; }
       if (command === 'clear') { console.clear(); printBanner(); continue; }
-      if (!commandNames.has(command) || command === 'help') {
+      const resolvedCommand = command === 'install' ? 'init' : command;
+      if (!commandNames.has(resolvedCommand) || resolvedCommand === 'help') {
         console.log(`${paint('33', 'Unknown shortcut:')} ${answer}. Type /help.`);
         continue;
       }
       try {
-        await execute(parseArgs([command, ...args]));
+        await execute(parseArgs([resolvedCommand, ...args]));
       } catch (error) {
-        console.error(paint('31', error.message));
+        const attemptedTarget = path.resolve(args.find((argument) => !argument.startsWith('-')) ?? '.');
+        console.error(paint('31', friendlyError(error, attemptedTarget)));
       }
       console.log();
     }
@@ -154,8 +193,17 @@ Before planning or modifying code, read \`.ai/AGENTS.md\`, \`.ai/project-rules.m
 `;
 
 async function install(options) {
+  if (isFilesystemRoot(options.target)) {
+    throw new Error(`devcanon will not install into the filesystem root.\n\n${targetGuidance(options.target)}`);
+  }
   if (!await exists(options.target)) throw new Error(`Target does not exist: ${options.target}`);
   if (!(await stat(options.target)).isDirectory()) throw new Error(`Target is not a directory: ${options.target}`);
+  try {
+    await access(options.target, constants.W_OK);
+    if (!options.dryRun) await mkdir(path.join(options.target, '.ai', 'prompts'), { recursive: true });
+  } catch (error) {
+    throw new Error(friendlyError(error, options.target), { cause: error });
+  }
 
   const standards = await filesUnder(templateRoot);
   const operations = (await Promise.all(standards.map(async (relative) => {
@@ -241,6 +289,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(`devcanon: ${error.message}`);
+  console.error(`devcanon: ${friendlyError(error)}`);
   process.exitCode = 1;
 });
