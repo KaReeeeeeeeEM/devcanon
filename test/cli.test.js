@@ -10,6 +10,7 @@ import { decodePreset, encodePreset } from '../lib/preset.js';
 
 const exec = promisify(execFile);
 const cli = path.resolve('bin/aistd.js');
+const packageVersion = JSON.parse(await readFile(path.resolve('package.json'), 'utf8')).version;
 
 test('installs standards into an existing directory', async () => {
   const target = await mkdtemp(path.join(os.tmpdir(), 'aistd-'));
@@ -45,7 +46,7 @@ test('interactive mode accepts slash shortcuts and exits cleanly', async () => {
   let exitSent = false;
   child.stdout.on('data', (chunk) => {
     output += chunk;
-    if (!exitSent && output.includes('devcanon › 2.1.0')) {
+    if (!exitSent && output.includes(`devcanon › ${packageVersion}`)) {
       exitSent = true;
       child.stdin.end('/exit\n');
     }
@@ -55,7 +56,7 @@ test('interactive mode accepts slash shortcuts and exits cleanly', async () => {
   const exitCode = await new Promise((resolve) => child.on('close', resolve));
   assert.equal(exitCode, 0);
   assert.match(output, /Engineering standards, on command/);
-  assert.match(output, /2\.1\.0/);
+  assert.match(output, new RegExp(packageVersion.replaceAll('.', '\\.')));
   assert.match(output, /Standards saved\. Build well\./);
 });
 
