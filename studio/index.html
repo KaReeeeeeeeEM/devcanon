@@ -1,1 +1,29 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Devcanon Studio</title><style>*{box-sizing:border-box}body{margin:0;background:#07101b;color:#e8f0f7;font:14px system-ui;display:grid;grid-template-columns:280px 1fr;height:100vh}aside{border-right:1px solid #1b2a3b;padding:20px;overflow:auto}h1{font:600 18px ui-monospace;color:#67e8f9}button{width:100%;text-align:left;background:transparent;color:#8fa2b7;border:0;border-radius:7px;padding:8px;cursor:pointer}button:hover,.active{background:#102234;color:white}.update{margin:14px 0;border:1px solid #28445b;color:#67e8f9;text-align:center}main{display:grid;grid-template-rows:auto 1fr}.bar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1b2a3b;padding:14px 20px}.save{width:auto;background:#0e7490;color:white;padding:9px 15px}textarea{resize:none;background:#09131f;color:#d5e1ec;border:0;outline:0;padding:28px;font:14px/1.65 ui-monospace}small{color:#61758b}@media(max-width:700px){body{grid-template-columns:1fr;grid-template-rows:220px 1fr}aside{border-right:0;border-bottom:1px solid #1b2a3b}}</style></head><body><aside><h1>devcanon studio</h1><small>Local handbook editor</small><button class="update" id="update">Update standards</button><div id="files"></div></aside><main><div class="bar"><span id="name">Choose a standard</span><button class="save" id="save">Save changes</button></div><textarea id="editor" spellcheck="false" disabled></textarea></main><script>const token="__TOKEN__",headers={Authorization:`Bearer ${token}`};let current;async function load(){const list=await fetch('/api/files',{headers}).then(r=>r.json());files.innerHTML=list.map(f=>`<button data-file="${f}">${f}</button>`).join('');}files.onclick=async e=>{const f=e.target.dataset.file;if(!f)return;current=f;name.textContent=f;editor.value=await fetch(`/api/file?path=${encodeURIComponent(f)}`,{headers}).then(r=>r.text());editor.disabled=false;document.querySelectorAll('[data-file]').forEach(b=>b.classList.toggle('active',b.dataset.file===f));};save.onclick=async()=>{if(!current)return;await fetch(`/api/file?path=${encodeURIComponent(current)}`,{method:'PUT',headers,body:editor.value});save.textContent='Saved';setTimeout(()=>save.textContent='Save changes',1200)};update.onclick=async()=>{update.textContent='Updating…';await fetch('/api/update',{method:'POST',headers});update.textContent='Updated';await load()};load();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Devcanon Studio</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#07101b;color:#e8f0f7;font:14px system-ui;display:grid;grid-template-columns:280px 1fr;height:100vh}aside{display:flex;min-height:0;flex-direction:column;border-right:1px solid #1b2a3b;padding:20px}.brand{display:flex;align-items:center;gap:11px;margin-bottom:18px}.brand-mark{display:grid;width:40px;height:40px;place-items:center;border:1px solid #17647a;border-radius:11px;background:#0b2634;color:#67e8f9;font:700 16px ui-monospace;letter-spacing:-.12em}.brand strong,.brand small{display:block}.brand strong{font:600 16px ui-monospace}.brand small{margin-top:1px;color:#61758b;font-size:11px}button{width:100%;text-align:left;background:transparent;color:#8fa2b7;border:0;border-radius:7px;padding:8px;cursor:pointer}button:hover,.active{background:#102234;color:white}.update{margin:0 0 14px;border:1px solid #28445b;color:#67e8f9;text-align:center}.files{min-height:0;overflow:auto}main{display:grid;grid-template-rows:auto 1fr}.bar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1b2a3b;padding:14px 20px}.save{width:auto;background:#0e7490;color:white;padding:9px 15px}textarea{resize:none;background:#09131f;color:#d5e1ec;border:0;outline:0;padding:28px;font:14px/1.65 ui-monospace}@media(max-width:700px){body{grid-template-columns:1fr;grid-template-rows:220px 1fr}aside{border-right:0;border-bottom:1px solid #1b2a3b}}
+  </style>
+</head>
+<body>
+  <aside>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">D›</span><span><strong>devcanon</strong><small>Studio · Local handbook editor</small></span></div>
+    <button class="update" id="update">Update standards</button>
+    <div class="files" id="files"></div>
+  </aside>
+  <main>
+    <div class="bar"><span id="name">Choose a standard</span><button class="save" id="save">Save changes</button></div>
+    <textarea id="editor" spellcheck="false" disabled></textarea>
+  </main>
+  <script>
+    const token="__TOKEN__",headers={Authorization:`Bearer ${token}`};let current;
+    async function load(){const list=await fetch('/api/files',{headers}).then(r=>r.json());files.replaceChildren(...list.map(file=>{const button=document.createElement('button');button.dataset.file=file;button.textContent=file;return button}))}
+    files.onclick=async event=>{const file=event.target.dataset.file;if(!file)return;current=file;name.textContent=file;editor.value=await fetch(`/api/file?path=${encodeURIComponent(file)}`,{headers}).then(response=>response.text());editor.disabled=false;document.querySelectorAll('[data-file]').forEach(button=>button.classList.toggle('active',button.dataset.file===file))};
+    save.onclick=async()=>{if(!current)return;await fetch(`/api/file?path=${encodeURIComponent(current)}`,{method:'PUT',headers,body:editor.value});save.textContent='Saved';setTimeout(()=>save.textContent='Save changes',1200)};
+    update.onclick=async()=>{update.textContent='Updating…';await fetch('/api/update',{method:'POST',headers});update.textContent='Updated';await load()};load();
+  </script>
+</body>
+</html>
