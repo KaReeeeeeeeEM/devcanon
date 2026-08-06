@@ -18,6 +18,7 @@ Clarity precedes decoration. Use restrained surfaces, strong hierarchy, delibera
 - A view has one dominant heading and normally one primary CTA.
 - Dense tools may optimize scan speed; marketing pages may use more expressive composition, but both use shared foundations.
 - Preserve recognizable brand and layout patterns from existing products.
+- Documentation surfaces follow the article hierarchy and reference-review workflow in `documentation.md`; do not style them as marketing landing pages.
 
 ## Examples
 ```css

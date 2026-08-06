@@ -1,6 +1,6 @@
 {
   "name": "devcanon",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Install durable AI engineering standards into any repository.",
   "type": "module",
   "bin": {
@@ -30,7 +30,7 @@
     "developer-tools"
   ],
   "author": "Kareem",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "node": ">=20"
   },

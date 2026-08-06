@@ -1,0 +1,29 @@
+name: Feature proposal
+description: Propose an improvement before investing in implementation.
+title: "[Feature]: "
+labels: ["proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: Please discuss material features before opening a pull request. Approval to discuss is not a promise to merge.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or maintainer problem needs solving?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+      description: Describe behavior and acceptance criteria, not only implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: What existing commands or approaches did you consider?
+    validations:
+      required: true

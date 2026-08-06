@@ -9,6 +9,19 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Documentation website with a release timeline and install/download options.
 - Configurable standard packs and organization presets.
 
+## [2.0.0] - 2026-08-06
+
+### Changed
+
+- Changed future releases from MIT to the source-available PolyForm Shield 1.0.0 license. Earlier MIT releases retain their original terms.
+- Expanded contribution rules with required issues, forks, pull requests, code-owner review, CI, and contributor IP declarations.
+- Moved website planning into a separate website repository.
+
+### Added
+
+- GitHub CODEOWNERS, pull-request template, feature-proposal template, and CI workflow.
+- Enforceable documentation-page design standards, including required review of the Reelma Pay reference whenever it is accessible.
+
 ## [1.1.1] - 2026-08-06
 
 ### Fixed
@@ -49,7 +62,8 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Conflict preservation, `--force`, `--dry-run`, and optional root `AGENTS.md` discovery.
 - Zero runtime dependencies and Node.js 20+ support.
 
-[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.0.0
 [1.1.1]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.1.1
 [1.1.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v1.1.0
 [1.0.0]: https://www.npmjs.com/package/devcanon/v/1.0.0

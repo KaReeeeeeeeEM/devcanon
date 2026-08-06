@@ -10,7 +10,7 @@
   <a href="https://www.npmjs.com/package/devcanon">npm</a> ·
   <a href="docs/CLI.md">CLI guide</a> ·
   <a href="CHANGELOG.md">Changelog</a> ·
-  <a href="docs/WEBSITE.md">Website plan</a>
+  <a href="https://github.com/KaReeeeeeeeEM/devcanon-website">Website</a>
 </p>
 
 ## Why devcanon?
@@ -108,14 +108,14 @@ The root `AGENTS.md` points compatible AI tools to `.ai/AGENTS.md`. Existing roo
 
 - [Complete CLI reference](docs/CLI.md)
 - [Release history](CHANGELOG.md)
-- [Website and download-page plan](docs/WEBSITE.md)
+- [devcanon website repository](https://github.com/KaReeeeeeeeEM/devcanon-website)
 - [Contributing guide](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 
 ## Future website
 
-The planned website will provide installation choices, direct links to the [npm registry](https://www.npmjs.com/package/devcanon), handbook previews, and a release timeline generated from `CHANGELOG.md`. See [the website specification](docs/WEBSITE.md).
+The separate website provides installation choices, direct links to the [npm registry](https://www.npmjs.com/package/devcanon), handbook previews, documentation, and a release timeline generated from this repository's `CHANGELOG.md`.
 
 ## License
 
-MIT © Kareem
+Source-available under the PolyForm Shield License 1.0.0 © Kareem. Published versions previously released under MIT remain available under their original terms.

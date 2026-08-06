@@ -44,7 +44,7 @@ test('interactive mode accepts slash shortcuts and exits cleanly', async () => {
   let exitSent = false;
   child.stdout.on('data', (chunk) => {
     output += chunk;
-    if (!exitSent && output.includes('devcanon › 1.1.1')) {
+    if (!exitSent && output.includes('devcanon › 2.0.0')) {
       exitSent = true;
       child.stdin.end('/exit\n');
     }
@@ -54,7 +54,7 @@ test('interactive mode accepts slash shortcuts and exits cleanly', async () => {
   const exitCode = await new Promise((resolve) => child.on('close', resolve));
   assert.equal(exitCode, 0);
   assert.match(output, /Engineering standards, on command/);
-  assert.match(output, /1\.1\.1/);
+  assert.match(output, /2\.0\.0/);
   assert.match(output, /Standards saved\. Build well\./);
 });
 
