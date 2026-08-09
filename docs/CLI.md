@@ -30,6 +30,9 @@ Run `devcanon` with no arguments. The prompt accepts slash commands and their pl
 | --- | --- |
 | `/init [path]` | Install missing standards safely |
 | `/install [path]` | Alias for `/init` |
+| `/setup [path]` | Create a product brief and complete AI build prompt |
+| `/configure [path]` | Edit one handbook file |
+| `/studio [path]` | Open the local visual handbook editor |
 | `/update [path]` | Add missing standards and report conflicts |
 | `/check [path]` | Validate all required files and sections |
 | `/where` | Display the current target directory |
@@ -58,13 +61,25 @@ devcanon › /init
 
 Adds all missing `.ai` files. Existing local files are never replaced by default. If the repository has no root `AGENTS.md`, devcanon adds a small discovery file pointing AI tools to the handbook.
 
+In an interactive terminal, `init` offers a short optional product setup. Choose the stack yourself or let the AI recommend the simplest suitable stack. Use `--no-setup` to skip the offer.
+
+### `devcanon setup [directory]`
+
+Asks simple questions about the product, then creates `.ai/product.md`, `.ai/product.json`, and `.ai/prompts/build-product.md`. Run it again whenever the product direction changes.
+
+Use a portable setup code made by the PWA or Devcanon Studio without answering the questions again:
+
+```bash
+devcanon init --product dcp1_<your-product-code>
+```
+
 ### `devcanon update [directory]`
 
 Compares the packaged handbook with the repository. Missing files are added, identical files are ignored, and modified files are reported as conflicts.
 
 ### `devcanon check [directory]`
 
-Validates the 43-file manifest and confirms every document contains Purpose, Philosophy, Best Practices, Rules, Examples, Anti-patterns, and Checklist sections.
+Validates the 48-file manifest and confirms every standard and reusable prompt contains Purpose, Philosophy, Best Practices, Rules, Examples, Anti-patterns, and Checklist sections.
 
 ## Options
 
@@ -73,6 +88,9 @@ Validates the 43-file manifest and confirms every document contains Purpose, Phi
 | `--dry-run` | Print operations without writing |
 | `--force` | Replace differing handbook files |
 | `--no-root-agents` | Skip creation of root `AGENTS.md` |
+| `--no-setup` | Skip optional product setup during `init` |
+| `--product <code>` | Apply a portable `dcp1_` product setup code |
+| `--preset <code>` | Apply a portable `dc1_` engineering preset code |
 | `--help`, `-h` | Print command help |
 | `--version`, `-v` | Print the version |
 

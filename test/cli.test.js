@@ -7,6 +7,7 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import test from 'node:test';
 import { decodePreset, encodePreset } from '../lib/preset.js';
+import { applyProduct, decodeProduct, encodeProduct, productPrompt } from '../lib/product.js';
 
 const exec = promisify(execFile);
 const cli = path.resolve('bin/aistd.js');
@@ -67,6 +68,24 @@ test('preset codes are deterministic and install a project profile', async () =>
   const target = await mkdtemp(path.join(os.tmpdir(), 'devcanon-preset-'));
   await exec(process.execPath, [cli, 'init', target, '--preset', code]);
   assert.match(await readFile(path.join(target, '.ai/preset.md'), 'utf8'), /\*\*accent\*\*: violet/);
+});
+
+test('product setup codes generate an agent brief and complete build prompt', async () => {
+  const product = { name: 'Pocket Garden', description: 'Help children remember to water plants.', kind: 'mobile', stackMode: 'choose', mobile: 'flutter-dart', language: 'dart', database: 'sqlite', dataTool: 'sql', hasDesignReferences: true };
+  const code = encodeProduct(product);
+  assert.equal(decodeProduct(code).name, 'Pocket Garden');
+  assert.match(productPrompt(product), /attach design examples/i);
+  const target = await mkdtemp(path.join(os.tmpdir(), 'devcanon-product-'));
+  await exec(process.execPath, [cli, 'init', target, '--product', code]);
+  assert.match(await readFile(path.join(target, '.ai/product.md'), 'utf8'), /Pocket Garden/);
+  assert.match(await readFile(path.join(target, '.ai/prompts/build-product.md'), 'utf8'), /Build Pocket Garden from start to finish/);
+});
+
+test('users can skip stack selection while keeping a useful build prompt', async () => {
+  const target = await mkdtemp(path.join(os.tmpdir(), 'devcanon-product-open-'));
+  await exec(process.execPath, [cli, 'init', target, '--no-setup']);
+  await applyProduct(target, { name: 'Simple idea', description: 'Help people plan meals.' });
+  assert.match(await readFile(path.join(target, '.ai/product.md'), 'utf8'), /Stack choices are intentionally open/);
 });
 
 test('unknown direct commands fail instead of being interpreted as paths', async () => {

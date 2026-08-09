@@ -9,11 +9,12 @@ import { fileURLToPath } from 'node:url';
 import { applyPreset } from '../lib/preset.js';
 import { configureStandards } from '../lib/configure.js';
 import { startStudio } from '../lib/studio.js';
+import { applyProduct, askProductQuestions } from '../lib/product.js';
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const templateRoot = path.join(packageRoot, '.ai');
 const packageJson = JSON.parse(await readFile(path.join(packageRoot, 'package.json'), 'utf8'));
-const commandNames = new Set(['init', 'update', 'check', 'configure', 'studio', 'help']);
+const commandNames = new Set(['init', 'update', 'check', 'configure', 'setup', 'studio', 'help']);
 const colorEnabled = process.stdout.isTTY && !process.env.NO_COLOR;
 const paint = (code, value) => colorEnabled ? `\u001b[${code}m${value}\u001b[0m` : value;
 
@@ -37,6 +38,7 @@ Usage:
   devcanon update [directory] [--dry-run] [--force]
   devcanon check [directory]
   devcanon configure [directory] [--file design.md]
+  devcanon setup [directory] [--product dcp1_code]
   devcanon studio [directory]
 
 Commands:
@@ -45,6 +47,7 @@ Commands:
   update  Show or apply changes from the installed template
   check   Validate the standards manifest and required document sections
   configure  Choose and edit an installed standard
+  setup   Create a product brief, choose an optional stack, and generate a build prompt
   studio  Open the visual local handbook editor
 
 Options:
@@ -52,6 +55,8 @@ Options:
   --force           Replace differing devcanon-managed files
   --no-root-agents  Do not create the root AGENTS.md discovery file
   --preset <code>   Apply a portable dc1 preset during init
+  --product <code>  Apply a portable dcp1 product setup during init or setup
+  --no-setup        Skip the guided product questions during init
   --file <path>     Edit one standard with configure
   -h, --help        Show this help
   -v, --version     Print the installed version
@@ -85,7 +90,7 @@ function friendlyError(error, target = process.cwd()) {
 
 function parseArgs(argv) {
   const flags = new Set(); const values = {}; const positional = [];
-  for (let index=0; index<argv.length; index++) { const arg=argv[index]; if(['--preset','--file'].includes(arg)){ if(!argv[index+1]) throw new Error(`${arg} requires a value.`); values[arg]=argv[++index]; } else if(arg.startsWith('-')) flags.add(arg); else positional.push(arg); }
+  for (let index=0; index<argv.length; index++) { const arg=argv[index]; if(['--preset','--product','--file'].includes(arg)){ if(!argv[index+1]) throw new Error(`${arg} requires a value.`); values[arg]=argv[++index]; } else if(arg.startsWith('-')) flags.add(arg); else positional.push(arg); }
   const command = positional.length === 0 ? 'interactive' : positional.shift();
   return {
     command,
@@ -96,6 +101,8 @@ function parseArgs(argv) {
     help: flags.has('-h') || flags.has('--help'),
     version: flags.has('-v') || flags.has('--version'),
     preset: values['--preset'],
+    product: values['--product'],
+    setup: !flags.has('--no-setup'),
     file: values['--file'],
   };
 }
@@ -131,6 +138,7 @@ async function runInteractive() {
   /update --dry-run     Preview an update
   /update --force       Replace locally modified standards
   /configure            Choose a standards file and edit it
+  /setup                Describe the product, optionally choose a stack, and create the AI build prompt
   /studio               Open the visual local editor
   /where                Show the current target directory
   /cd <path>            Change the current target directory
@@ -198,6 +206,19 @@ async function sameContent(left, right) {
   return (await readFile(left)).equals(await readFile(right));
 }
 
+async function productForInstall(options, providedTerminal) {
+  if (options.product) return options.product;
+  if (!options.setup || (!providedTerminal && !process.stdin.isTTY)) return null;
+  const terminal = providedTerminal || readline.createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const answer = await terminal.question('Would you like a simple product setup now? (y/N): ');
+    if (!['y', 'yes'].includes(answer.trim().toLowerCase())) return null;
+    return await askProductQuestions({ terminal });
+  } finally {
+    if (!providedTerminal) terminal.close();
+  }
+}
+
 const rootAgentContent = `# Repository AI Instructions
 
 The authoritative AI engineering standards for this repository are in [\`.ai/AGENTS.md\`](.ai/AGENTS.md).
@@ -205,7 +226,7 @@ The authoritative AI engineering standards for this repository are in [\`.ai/AGE
 Before planning or modifying code, read \`.ai/AGENTS.md\`, \`.ai/project-rules.md\`, and every standard relevant to the task. Existing repository conventions remain authoritative where the standards require local adaptation.
 `;
 
-async function install(options) {
+async function install(options, context = {}) {
   if (isFilesystemRoot(options.target)) {
     throw new Error(`devcanon will not install into the filesystem root.\n\n${targetGuidance(options.target)}`);
   }
@@ -250,6 +271,13 @@ async function install(options) {
   else console.log(`\n${options.dryRun ? 'Previewed' : 'Completed'}: ${changed} change(s), ${conflicts} preserved conflict(s).`);
   if (conflicts) console.log('Review conflicts manually or rerun with --force to replace them.');
   if (options.preset && !options.dryRun) { await applyPreset(options.target, options.preset); console.log('Applied project preset: .ai/preset.md'); }
+  if (!options.dryRun && options.command === 'init' && options.setup) {
+    const product = await productForInstall(options, context.terminal);
+    if (product) {
+      await applyProduct(options.target, product);
+      console.log('Created product brief and ready-to-use AI prompt: .ai/prompts/build-product.md');
+    }
+  }
   if (options.command === 'init' && !options.dryRun) console.log('Start with .ai/AGENTS.md.');
 }
 
@@ -262,6 +290,8 @@ const requiredFiles = [
   'notifications.md', 'uploads.md', 'internationalization.md', 'responsiveness.md',
   'folder-structure.md', 'naming-conventions.md', 'project-rules.md',
   ...['dashboard', 'admin-panel', 'landing-page', 'crud', 'authentication', 'ecommerce', 'analytics', 'ai-features', 'saas', 'api-module']
+    .map((name) => path.join('prompts', `${name}.md`)),
+  ...['web-product', 'mobile-product', 'api-product', 'desktop-product', 'general-product']
     .map((name) => path.join('prompts', `${name}.md`)),
 ];
 const requiredSections = ['Purpose', 'Philosophy', 'Best Practices', 'Rules', 'Examples', 'Anti-patterns', 'Checklist'];
@@ -291,8 +321,14 @@ async function check(target) {
 async function execute(options, context = {}) {
   if (options.command === 'check') return check(options.target);
   if (options.command === 'configure') return configureStandards(options.target, { file: options.file, terminal: context.terminal });
+  if (options.command === 'setup') {
+    const product = options.product || await askProductQuestions({ terminal: context.terminal });
+    const result = await applyProduct(options.target, product);
+    console.log(`Created .ai/product.md, .ai/product.json, and .ai/prompts/build-product.md\nProduct code: ${result.code}`);
+    return result;
+  }
   if (options.command === 'studio') return startStudio(options.target, { onUpdate: () => install({ ...options, command: 'update', force: false, dryRun: false }) });
-  if (options.command === 'init' || options.command === 'update') return install(options);
+  if (options.command === 'init' || options.command === 'update') return install(options, context);
   throw new Error(`Unknown command: ${options.command}`);
 }
 

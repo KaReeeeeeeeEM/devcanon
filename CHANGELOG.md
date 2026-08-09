@@ -4,10 +4,15 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 
 ## [Unreleased]
 
-### Planned
+## [2.2.0] - 2026-08-09
 
-- Documentation website with a release timeline and install/download options.
-- Configurable standard packs and organization presets.
+### Added
+
+- Optional guided product setup during `init`, with a clear skip path for users who do not want to choose a stack.
+- Simple, project-aware questions for web, mobile, API, desktop, and other products.
+- Portable `dcp1_` product codes for sharing the same setup between the CLI, web app, and Devcanon Studio.
+- Generated `.ai/product.md`, `.ai/product.json`, and `.ai/prompts/build-product.md` files that give an AI agent the product context and an end-to-end build request.
+- Project-specific prompt templates for web, mobile, API, desktop, and general products.
 
 ## [2.1.1] - 2026-08-06
 
@@ -79,7 +84,8 @@ All notable changes to devcanon are recorded here. Releases follow [Semantic Ver
 - Conflict preservation, `--force`, `--dry-run`, and optional root `AGENTS.md` discovery.
 - Zero runtime dependencies and Node.js 20+ support.
 
-[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/KaReeeeeeeeEM/devcanon/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.2.0
 [2.1.1]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.1.1
 [2.1.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.1.0
 [2.0.0]: https://github.com/KaReeeeeeeeEM/devcanon/releases/tag/v2.0.0
