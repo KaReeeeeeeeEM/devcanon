@@ -30,6 +30,7 @@ Running `devcanon` without arguments opens the interactive terminal:
 
 ```text
 devcanon › /init
+devcanon › /setup
 devcanon › /configure
 devcanon › /studio
 devcanon › /check
@@ -48,6 +49,14 @@ devcanon › /init
 
 ```bash
 npx devcanon init
+```
+
+When the terminal is interactive, Devcanon offers a short, optional product setup before installation. Choose your kind of product and stack, or skip every technical choice. Devcanon then creates a plain-language product brief and a complete AI build prompt in `.ai/prompts/build-product.md`.
+
+You can run the setup again at any time:
+
+```bash
+devcanon setup
 ```
 
 Use a preset created in the web or desktop Studio:
@@ -108,7 +117,8 @@ AGENTS.md                 AI-tool discovery file, created only if absent
 ├── security.md           Secure engineering defaults
 ├── testing.md            Risk-based verification strategy
 ├── ...                   33 focused engineering standards
-└── prompts/              10 reusable feature implementation guides
+├── product.md            Optional product and stack brief
+└── prompts/              Reusable guides and generated build prompt
 ```
 
 The root `AGENTS.md` points compatible AI tools to `.ai/AGENTS.md`. Existing root instructions are never overwritten.
